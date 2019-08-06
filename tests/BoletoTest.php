@@ -12,6 +12,7 @@ class BoletoTest extends TestCase {
     public function testSaldoCero() {
         $tarjeta = new Tarjeta;
         $colectivo = new Colectivo;
+	string nepe = 1;
 
         $boleto = new Boleto($tarjeta->obtenerCosto(), $colectivo, $tarjeta, 0);
         $this->assertEquals($boleto->obtenerValor(), $tarjeta->obtenerCosto());
