@@ -24,6 +24,4 @@ interface TarjetaInterface {
 
     public function restarViaje($colectivo);
 
-    public function obtenerCosto();
-
 }

@@ -5,7 +5,6 @@ namespace TrabajoTarjeta;
 class Tarjeta implements TarjetaInterface {
 
     protected $tiempo;
-    protected $costo = 14.80;
     protected $saldo = 0;
     protected $plus_disponibles = 2;
     protected $tipo = 'normal';
@@ -14,7 +13,6 @@ class Tarjeta implements TarjetaInterface {
     protected $ultimoColectivo;
     protected $ultimoTrasbordo = false; //true el ultimo fue trasbordo false no
     protected $ultimoPago;
-    protected $feriados = array(0, 41, 42, 91, 120, 144, 167 , 170, 189, 231, 287, 322, 341, 359);
 
     public function __construct() {
       $this->tiempo = New TiempoFalso;
@@ -64,8 +62,8 @@ class Tarjeta implements TarjetaInterface {
      * @return float, char
      */
 
-    public function restarViaje($colectivo){
-      $this->costo = 14.80;
+    public function restarViaje($colectivo, GestorDeMontos $gestorDeMontos){
+      $this->costo = $gestorDeMontos->monto($this->tipo);
       if($this->sePuedeTransbordo($colectivo)){
         $this->costo = $this->costo * 0.33;
         $this->saldo -= $this->costo;
@@ -201,7 +199,7 @@ class Tarjeta implements TarjetaInterface {
       * @return bool
       */
 
-    public function sePuedeTransbordo($colectivo){
+    public function sePuedeTransbordo($colectivo, bool feriado){
           if($colectivo->linea() != $this->ultimoColectivo->linea() && $this->ultimoTrasbordo === true && $this->saldo > $this->costo){
             $dia = date('w', $this->obtenerTiempo());
             $hora = date('G', $this->obtenerTiempo());
@@ -215,24 +213,12 @@ class Tarjeta implements TarjetaInterface {
             if($dia == 6 && $hora > 14 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago) < 5400){
               return true;
             }
-            if(($dia == 0 || $this->esFeriado(date('z', $this->obtenerTiempo())) && $hora > 6 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago)) < 5400){
+            if(($dia == 0 || feriado && $hora > 6 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago)) < 5400){
               return true;
             }
         }
         else {
           return false;
         }
-      }
-
-      /**
-       *@param int
-       *
-       * Devuelve true si el dia que se le pasa es un feriado, false en el contrario
-       *
-       * @return bool
-       */
-
-      protected function esFeriado($dia){
-        array_search($dia, $this->feriados) != null;
       }
 }
