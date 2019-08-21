@@ -80,7 +80,7 @@ class BoletoTest extends TestCase {
         $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedioUni($tiempo);
-        $tarjeta->recargar(50);
+        $tarjeta->recargar(50, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(86400);
 
@@ -104,12 +104,12 @@ class BoletoTest extends TestCase {
 
         $tarjeta2 = new TarjetaMedioUni($tiempo);
         $tarjeta2->recargar(30, $gestor);
-        $tarjeta2->restarViaje($colectivo);
+        $tarjeta2->pagarBoleto($colectivo);
         $tarjeta2->avanzarTiempo(86600);
-        $this->assertEquals($tarjeta2->restarViaje($colectivo), 1);
+        $this->assertEquals($tarjeta2->pagarBoleto($colectivo), 1);
         $tarjeta2->avanzarTiempo(86600);
-        $tarjeta2->restarViaje($colectivo);
-        $this->assertFalse($tarjeta2->restarViaje($colectivo));
+        $tarjeta2->pagarBoleto($colectivo);
+        $this->assertFalse($tarjeta2->pagarBoleto($colectivo));
 
     }
 

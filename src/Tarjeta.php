@@ -176,7 +176,7 @@ class Tarjeta implements TarjetaInterface {
       * @return bool
       */
 
-    public function sePuedeTransbordo($colectivo, bool $feriado){
+    public function sePuedeTransbordo($colectivo){
           if($colectivo->linea() != $this->ultimoColectivo->linea() && $this->ultimoTrasbordo === true && $this->saldo > $this->costo){
             $dia = date('w', $this->obtenerTiempo());
             $hora = date('G', $this->obtenerTiempo());
@@ -190,7 +190,7 @@ class Tarjeta implements TarjetaInterface {
             if($dia == 6 && $hora > 14 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago) < 5400){
               return true;
             }
-            if(($dia == 0 || $feriado && $hora > 6 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago)) < 5400){
+            if(($dia == 0 /*|| feriado()*/ && $hora > 6 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago)) < 5400){
               return true;
             }
         }
