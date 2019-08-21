@@ -53,11 +53,11 @@ class Colectivo implements ColectivoInterface {
       if($pago === false){
         return false;//no tiene saldo
       }else if($pago === true){
-        return New Boleto($tarjeta->obtenerCosto(), $this, $tarjeta, 'normal');//boleto normal
+        return New Boleto($tarjeta->abonado(), $this, $tarjeta, 'normal');//boleto normal
       }else if ($pago === 'p'){
-        return New Boleto($tarjeta->obtenerCosto(), $this, $tarjeta, 'plus');//boleto plus
+        return New Boleto($tarjeta->abonado(), $this, $tarjeta, 'plus');//boleto plus
       }else if ($pago === 't'){
-        return New Boleto($tarjeta->obtenerCosto(), $this, $tarjeta, 'trasbordo');// boleto trasbordo
+        return New Boleto($tarjeta->abonado(), $this, $tarjeta, 'trasbordo');// boleto trasbordo
       }
     }
 }

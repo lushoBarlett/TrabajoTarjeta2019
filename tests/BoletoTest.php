@@ -16,8 +16,8 @@ class BoletoTest extends TestCase {
         $tarjeta = new Tarjeta;
         $colectivo = new Colectivo;
 
-        $boleto = new Boleto($tarjeta->obtenerCosto(), $colectivo, $tarjeta, 0);
-        $this->assertEquals($boleto->obtenerValor(), $tarjeta->obtenerCosto());
+        $boleto = new Boleto($tarjeta->abonado(), $colectivo, $tarjeta, 0);
+        $this->assertEquals($boleto->obtenerValor(), $tarjeta->abonado());
     }
 
     /**
