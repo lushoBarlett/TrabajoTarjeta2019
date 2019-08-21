@@ -20,12 +20,12 @@ class GestorDeMontos implements GestorDeMontosInterface {
     }
 
     public function montoAPagar($tipo) {
-        if(array_key_exists($tipo,$this->montosDeViaje)) return null;
+        if(!array_key_exists($tipo,$this->montosDeViaje)) return null;
         return $this->montosDeViaje[$tipo];
     }
 
     public function montoACargar($monto) {
-        if(array_key_exists($monto,$this->montosDeRecarga)) return null;
+        if(!array_key_exists($monto,$this->montosDeRecarga)) return null;
         return $this->montosDeRecarga[$monto];
     }
 }

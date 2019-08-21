@@ -84,6 +84,7 @@ class TarjetaTest extends TestCase {
         $tarjeta = new Tarjeta;
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->recargar(100, $gestor);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes["normal"] * 2);
     }
 

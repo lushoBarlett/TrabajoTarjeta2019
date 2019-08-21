@@ -48,7 +48,7 @@ class Colectivo implements ColectivoInterface {
      * 
      * @return Boleto
      */
-    public function pagarCon(TarjetaInterface $tarjeta, GestorDeMontoInterface $gestor){
+    public function pagarCon(TarjetaInterface $tarjeta, GestorDeMontosInterface $gestor){
       $pago = $tarjeta->pagarBoleto($this,$gestor);
       if($pago === false){
         return false;//no tiene saldo

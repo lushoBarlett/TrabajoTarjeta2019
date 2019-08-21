@@ -13,7 +13,6 @@ class BoletoTest extends TestCase {
      * Comprueba que es posible tener saldo cero.
      */
     public function testSaldoCero() {
-        $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tarjeta = new Tarjeta;
         $colectivo = new Colectivo;
 
