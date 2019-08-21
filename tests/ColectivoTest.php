@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class ColectivoTest extends TestCase {
 
+    const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
+    const recargas = array(10 => 10, 30 => 30, 50 => 50, 100 => 100, 200 => 200, 947.60 => 1100, 1788.80 => 2200);
+
     /**
      * Comprueba que siempre es posible pagar con la tarjeta, se cuentan los dos viajes plus.
      */
@@ -25,39 +28,42 @@ class ColectivoTest extends TestCase {
      * Comprueba que el costo del viaje de la tarjeta del tipo medio sea el correspondiente.
      */
     public function testMedioSiempreMedio() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(30);
+        $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(300);
-        $this->assertEquals($colectivo->pagarCon($tarjeta)->obtenerValor(), 14.80/2);
+        $this->assertEquals($colectivo->pagarCon($tarjeta)->obtenerValor(), ColectivoTest::viajes["medio"]);
     }
 
     /**
      * Comprueba que efectivamente se puedan utilizar dos viajes plus.
      */
     public function testHastaDosPLus() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(20);
-        $tarjeta->restarViaje($colectivo);
-        $tarjeta->restarViaje($colectivo);
-        $tarjeta->restarViaje($colectivo);
-        $this->assertFalse($tarjeta->restarViaje($colectivo));
+        $tarjeta->recargar(30, $gestor);
+        $tarjeta->restarViaje($colectivo, $gestor);
+        $tarjeta->restarViaje($colectivo, $gestor);
+        $tarjeta->restarViaje($colectivo, $gestor);
+        $this->assertFalse($tarjeta->restarViaje($colectivo, $gestor));
     }
 
     /**
      * Comprueba que se descuenten correctamente los viajes plus.
      */
     public function testDescuentoDePLus() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(20);
-        $tarjeta->restarViaje($colectivo);
+        $tarjeta->recargar(30);
+        $tarjeta->restarViaje($colectivo, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 2);
-        $tarjeta->restarViaje($colectivo);
+        $tarjeta->restarViaje($colectivo, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 1);
-        $tarjeta->restarViaje($colectivo);
+        $tarjeta->restarViaje($colectivo, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 0);
     }
 

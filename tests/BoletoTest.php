@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class BoletoTest extends TestCase {
 
+    const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
+    const recargas = array(10 => 10, 30 => 30, 50 => 50, 100 => 100, 200 => 200, 947.60 => 1100, 1788.80 => 2200);
+
     /**
      * Comprueba que es posible tener saldo cero.
      */
@@ -22,8 +25,9 @@ class BoletoTest extends TestCase {
      * Ademas de que cada funcion para obtener la informacion del boleto funcione correctamente.
      */
     public function testBoletoNormal() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(30);
+        $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo(142, "Metrobus", 3541);
 
         $tarjeta->avanzarTiempo(5400);
@@ -51,9 +55,10 @@ class BoletoTest extends TestCase {
      * otro boleto dentro de los 5 minutos, su tipo sera normal.
      */
     public function testBoletoMedio() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(10);
+        $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(300);
 
@@ -71,6 +76,7 @@ class BoletoTest extends TestCase {
      * Ademas comprueba que funcione el limite de dos boletos medio por dia.
      */
     public function testBoletoMedioUni() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedioUni($tiempo);
         $tarjeta->recargar(50);
@@ -80,23 +86,23 @@ class BoletoTest extends TestCase {
         $boleto = $colectivo->pagarCon($tarjeta);
         $this->assertEquals($boleto->obtenerTipoTarj(), 'medio');
         $this->assertEquals($boleto->obtenerTipo(), 'normal');
-        $this->assertEquals($boleto->obtenerValor(), 7.40);
+        $this->assertEquals($boleto->obtenerValor(), BoletoTest::viajes["medio"]);
 
         $tarjeta->avanzarTiempo(300);
         $boleto = $colectivo->pagarCon($tarjeta);
         $this->assertEquals($boleto->obtenerTipo(), 'normal');
-        $this->assertEquals($boleto->obtenerValor(), 7.40);
+        $this->assertEquals($boleto->obtenerValor(), BoletoTest::viajes["medio"]);
 
         $boleto = $colectivo->pagarCon($tarjeta);
         $this->assertEquals($boleto->obtenerTipo(), 'normal');
-        $this->assertEquals($boleto->obtenerValor(), 14.80);
+        $this->assertEquals($boleto->obtenerValor(), BoletoTest::viajes["normal"]);
 
         $tarjeta->avanzarTiempo(86400);
         $boleto = $colectivo->pagarCon($tarjeta);
-        $this->assertEquals($boleto->obtenerValor(), 7.40);
+        $this->assertEquals($boleto->obtenerValor(), BoletoTest::viajes["medio"]);
 
         $tarjeta2 = new TarjetaMedioUni($tiempo);
-        $tarjeta2->recargar(10);
+        $tarjeta2->recargar(30, $gestor);
         $tarjeta2->restarViaje($colectivo);
         $tarjeta2->avanzarTiempo(86600);
         $this->assertEquals($tarjeta2->restarViaje($colectivo), 1);
@@ -110,8 +116,9 @@ class BoletoTest extends TestCase {
      * Comprueba que el tipo del boleto sea libre al utilizar una tarjeta del tipo libre.
      */
     public function testBoletoLibre() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $tarjeta = new TarjetaLibre;
-        $tarjeta->recargar(30);
+        $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo;
         $boleto = $colectivo->pagarCon($tarjeta);
         $this->assertEquals($boleto->obtenerTipoTarj(), 'libre');
@@ -122,9 +129,10 @@ class BoletoTest extends TestCase {
      * Comprueba que funcione el limite de un boleto medio cada 5 minutos
      */
     public function testLimiteCinco() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(50);
+        $tarjeta->recargar(50, $gestor);
         $colectivo = new Colectivo;
         $boleto = $colectivo->pagarCon($tarjeta);
         // $tarjeta->avanzarTiempo(300);
