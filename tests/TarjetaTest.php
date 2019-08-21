@@ -5,16 +5,19 @@ namespace TrabajoTarjeta;
 use PHPUnit\Framework\TestCase;
 
 class TarjetaTest extends TestCase {
-    
+
+    const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
+    const recargas = array(10 => 10, 30 => 30, 50 => 50, 100 => 100, 200 => 200, 947.60 => 1100, 1788.80 => 2200);
+
     /**
     * Comprueba que es posible pagar un viaje con y sin tener saldo
     */
-    
     public function testPagarSaldo() {
+        $gestor = new GestorDeMontos(viajes,recargas);
         $tarjeta = new Tarjeta;
-        $colectivo = New Colectivo(145, "Metrobus", 4825);
+        $colectivo = new Colectivo(145, "Metrobus", 4825);
 
-        $tarjeta->recargar(20);
+        $tarjeta->recargar(30, $gestor);
         $boleto = $colectivo->pagarCon($tarjeta);
         $this->assertEquals($boleto->obtenerTipo(), "normal");
 
@@ -32,22 +35,21 @@ class TarjetaTest extends TestCase {
         $this->assertTrue($tarjeta->recargar(10));
         $this->assertEquals($tarjeta->obtenerSaldo(), 10);
 
-        $this->assertTrue($tarjeta->recargar(20));
-        $this->assertEquals($tarjeta->obtenerSaldo(), 30);
+        $this->assertTrue($tarjeta->recargar(30));
+        $this->assertEquals($tarjeta->obtenerSaldo(), 40);
 
-        $this->assertTrue($tarjeta->recargar(510.15));
-        $this->assertEquals($tarjeta->obtenerSaldo(), 622.08);
+        $this->assertTrue($tarjeta->recargar(947.60));
+        $this->assertEquals($tarjeta->obtenerSaldo(), 987.60);
 
-        $this->assertTrue($tarjeta->recargar(962.59));
-        $this->assertEquals($tarjeta->obtenerSaldo(), 1806.25);
+        $this->assertTrue($tarjeta->recargar(1788.80));
+        $this->assertEquals($tarjeta->obtenerSaldo(), 2776.48);
     }
 
     /**
      * Comprueba que al realizar una recarga luego de haber utilizado los viajes plus, estos vuelvan a su valor inicial.
      */
-    
     public function testCargaPlus(){
-        $colectivo = New Colectivo;
+        $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
 
         $tarjeta->restarViaje($colectivo);
@@ -72,13 +74,14 @@ class TarjetaTest extends TestCase {
 
         $tarjeta->restarViaje($colectivo);
         $tarjeta->restarViaje($colectivo);
-        $tarjeta->recargar(50);
+        $tarjeta->recargar(100);
         $tarjeta->restarViaje($colectivo);
-        $this->assertEquals($tarjeta->abonado(), 14.8/*($tarjeta->obtenerCosto() * 3)*/);
-
+        $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes["normal"] * 3);
+        
+        $tarjeta = new Tarjeta;
         $tarjeta->restarViaje($colectivo);
-        $tarjeta->recargar(50);
-      $this->assertEquals($tarjeta->abonado(), 14.8/*($tarjeta->obtenerCosto() * 2)*/);
+        $tarjeta->recargar(100);
+        $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes["normal"] * 2);
     }
 
     /**
@@ -96,7 +99,7 @@ class TarjetaTest extends TestCase {
      */
     public function testTrasbordo() {
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(50);
+        $tarjeta->recargar(100);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
         $boleto = $colectivo->pagarCon($tarjeta);
         $colectivo = new Colectivo(456, "Rosariobus", 1234);

@@ -9,38 +9,23 @@ class Tarjeta implements TarjetaInterface {
     protected $plus_disponibles = 2;
     protected $tipo = 'normal';
     protected $id;
-    protected $recarga_plus = 0;//0 no recargo plus, 1 1, 2 2
+    protected $recarga_plus = 0; //0 no recargo plus, 1 1, 2 2
     protected $ultimoColectivo;
     protected $ultimoTrasbordo = false; //true el ultimo fue trasbordo false no
     protected $ultimoPago;
 
     public function __construct() {
-      $this->tiempo = New TiempoFalso;
-      $this->ultimoColectivo = New Colectivo(0,0,0);
+      $this->tiempo = new TiempoFalso;
+      $this->ultimoColectivo = new Colectivo(0,0,0);
     }
 
-    /**
-     *@param float
-     *
-     * Devuelve un bool, en el caso de que el monto se pueda recargar será true (y se recargará), sino false.
-     *
-     * @return bool
-     */
-
-    public function recargar($monto) {
-      if (in_array($monto, array(10,20,30,50,100))) {
-        $this->saldo += $monto;
-      }
-      else if($monto == 510.15) {
-        $this->saldo += ($monto + 81.93);
-      }
-      else if($monto == 962.59) {
-        $this->saldo += ($monto + 221.58);
-      }
-      else {
+    public function recargar($monto, GestorDeMontosInterface $gestorDeMontos) {
+      if ($montoValidado = $gestorDeMontos->montoACargar($monto)) {
+        $this->saldo += $montoValidado;
+      } else {
         return false;
       }
-      if($this->saldo > ($this->costo*2)){
+      if($this->saldo > ($gestorDeMontos->montoAPagar($tipo)*2)){
         if($this->plus_disponibles != 2){
           $this->saldo -= ($this->costo * (2 - $this->plus_disponibles));
           if($this->plus_disponibles === 0){
@@ -54,26 +39,18 @@ class Tarjeta implements TarjetaInterface {
       return true;
     }
 
-    /**
-     *@param ColectivoInterface
-     *
-     * Descuenta un viaje de ser posible, sino devuelve false. Al restar un viaje, devuelve t si es transbordo, p si es plus, y true si es boleto normal
-     *
-     * @return float, char
-     */
-
-    public function restarViaje($colectivo, GestorDeMontos $gestorDeMontos){
-      $this->costo = $gestorDeMontos->monto($this->tipo);
+    public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
+      $costo = $gestorDeMontos->monto($this->tipo);
       if($this->sePuedeTransbordo($colectivo)){
-        $this->costo = $this->costo * 0.33;
-        $this->saldo -= $this->costo;
+        $costo = $costo * 0.33;
+        $this->saldo -= $costo;
         $this->ultimoColectivo = $colectivo;
         $this->ultimoPago = $this->obtenerTiempo();
         $this->ultimoTrasbordo = False;
-        return 't';
+        return true;
       }else{
-        if($this->saldo > $this->costo){
-          $this->saldo -= $this->costo;
+        if($this->saldo > $costo){
+          $this->saldo -= $costo;
           $this->ultimoColectivo = $colectivo;
           $this->ultimoPago = $this->obtenerTiempo();
           $this->ultimoTrasbordo = True;
@@ -82,7 +59,7 @@ class Tarjeta implements TarjetaInterface {
           $this->restarPlus();
           $this->ultimoColectivo = $colectivo;
           $this->ultimoPago = $this->obtenerTiempo();
-          return 'p';
+          return true;
         }else{
           return false;
       }
@@ -199,7 +176,7 @@ class Tarjeta implements TarjetaInterface {
       * @return bool
       */
 
-    public function sePuedeTransbordo($colectivo, bool feriado){
+    public function sePuedeTransbordo($colectivo, bool $feriado){
           if($colectivo->linea() != $this->ultimoColectivo->linea() && $this->ultimoTrasbordo === true && $this->saldo > $this->costo){
             $dia = date('w', $this->obtenerTiempo());
             $hora = date('G', $this->obtenerTiempo());
@@ -213,7 +190,7 @@ class Tarjeta implements TarjetaInterface {
             if($dia == 6 && $hora > 14 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago) < 5400){
               return true;
             }
-            if(($dia == 0 || feriado && $hora > 6 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago)) < 5400){
+            if(($dia == 0 || $feriado && $hora > 6 && $hora < 22 && ($this->obtenerTiempo - $this->ultimoPago)) < 5400){
               return true;
             }
         }
