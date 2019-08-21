@@ -9,16 +9,11 @@ class BoletoTest extends TestCase {
     const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
     const recargas = array(10 => 10, 30 => 30, 50 => 50, 100 => 100, 200 => 200, 947.60 => 1100, 1788.80 => 2200);
 
-    protected $gestor;
-
-    public function __construct() {
-        $this->gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
-    }
-
     /**
      * Comprueba que es posible tener saldo cero.
      */
     public function testSaldoCero() {
+        $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tarjeta = new Tarjeta;
         $colectivo = new Colectivo;
 
@@ -31,8 +26,9 @@ class BoletoTest extends TestCase {
      * Ademas de que cada funcion para obtener la informacion del boleto funcione correctamente.
      */
     public function testBoletoNormal() {
+        $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(30, $this->gestor);
+        $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo(142, "Metrobus", 3541);
 
         $tarjeta->avanzarTiempo(5400);
@@ -60,9 +56,10 @@ class BoletoTest extends TestCase {
      * otro boleto dentro de los 5 minutos, su tipo sera normal.
      */
     public function testBoletoMedio() {
+        $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(30, $this->gestor);
+        $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(300);
 
@@ -80,6 +77,7 @@ class BoletoTest extends TestCase {
      * Ademas comprueba que funcione el limite de dos boletos medio por dia.
      */
     public function testBoletoMedioUni() {
+        $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedioUni($tiempo);
         $tarjeta->recargar(50);
@@ -105,7 +103,7 @@ class BoletoTest extends TestCase {
         $this->assertEquals($boleto->obtenerValor(), BoletoTest::viajes["medio"]);
 
         $tarjeta2 = new TarjetaMedioUni($tiempo);
-        $tarjeta2->recargar(30, $this->gestor);
+        $tarjeta2->recargar(30, $gestor);
         $tarjeta2->restarViaje($colectivo);
         $tarjeta2->avanzarTiempo(86600);
         $this->assertEquals($tarjeta2->restarViaje($colectivo), 1);
@@ -119,8 +117,9 @@ class BoletoTest extends TestCase {
      * Comprueba que el tipo del boleto sea libre al utilizar una tarjeta del tipo libre.
      */
     public function testBoletoLibre() {
+        $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tarjeta = new TarjetaLibre;
-        $tarjeta->recargar(30, $this->gestor);
+        $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo;
         $boleto = $colectivo->pagarCon($tarjeta);
         $this->assertEquals($boleto->obtenerTipoTarj(), 'libre');
@@ -131,9 +130,10 @@ class BoletoTest extends TestCase {
      * Comprueba que funcione el limite de un boleto medio cada 5 minutos
      */
     public function testLimiteCinco() {
+        $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(50, $this->gestor);
+        $tarjeta->recargar(50, $gestor);
         $colectivo = new Colectivo;
         $boleto = $colectivo->pagarCon($tarjeta);
         // $tarjeta->avanzarTiempo(300);
