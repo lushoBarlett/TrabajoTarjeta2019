@@ -18,7 +18,7 @@ class ColectivoTest extends TestCase {
         $tarjeta = new TarjetaLibre;
         $colectivo = new Colectivo;
         for($i = 0; $i < 10; $i++){
-          if($colectivo->pagarCon($tarjeta) == false){
+          if($colectivo->pagarCon($tarjeta, $gestor) == false){
             $f++;
           }
         }
@@ -35,7 +35,7 @@ class ColectivoTest extends TestCase {
         $tarjeta->recargar(30, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(300);
-        $this->assertEquals($colectivo->pagarCon($tarjeta)->obtenerValor(), ColectivoTest::viajes["medio"]);
+        $this->assertEquals($colectivo->pagarCon($tarjeta, $gestor)->obtenerValor(), ColectivoTest::viajes["medio"]);
     }
 
     /**
@@ -59,7 +59,7 @@ class ColectivoTest extends TestCase {
         $gestor = new GestorDeMontos(ColectivoTest::viajes,ColectivoTest::recargas);
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(30);
+        $tarjeta->recargar(30, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 2);
         $tarjeta->pagarBoleto($colectivo, $gestor);

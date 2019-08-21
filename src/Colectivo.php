@@ -9,10 +9,8 @@ class Colectivo implements ColectivoInterface {
 
     const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
     const recargas = array(10 => 10, 30 => 30, 50 => 50, 100 => 100, 200 => 200, 947.60 => 1100, 1788.80 => 2200);
-    protected $gestor;
-
+    
     public function __construct($linea = 0, $empresa = 0, $numero = 0){
-      $this->$gestor = new GestorDeMontos(Colectivo::viajes,Colectivo::recargas);
       $this->linea = $linea;
       $this->empresa = $empresa;
       $this->numero = $numero;
@@ -50,8 +48,8 @@ class Colectivo implements ColectivoInterface {
      * 
      * @return Boleto
      */
-    public function pagarCon(TarjetaInterface $tarjeta){
-      $pago = $tarjeta->pagarBoleto($this,$this->gestor);
+    public function pagarCon(TarjetaInterface $tarjeta, GestorDeMontoInterface $gestor){
+      $pago = $tarjeta->pagarBoleto($this,$gestor);
       if($pago === false){
         return false;//no tiene saldo
       }else if($pago === true){

@@ -40,7 +40,7 @@ class Tarjeta implements TarjetaInterface {
     }
 
     public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
-      $costo = $gestorDeMontos->monto($this->tipo);
+      $costo = $gestorDeMontos->montoAPagar($this->tipo);
       if($this->sePuedeTransbordo($colectivo)){
         $costo = $costo * 0.33;
         $this->saldo -= $costo;

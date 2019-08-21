@@ -18,11 +18,11 @@ class TarjetaTest extends TestCase {
         $colectivo = new Colectivo(145, "Metrobus", 4825);
 
         $tarjeta->recargar(30, $gestor);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $this->assertEquals($boleto->obtenerTipo(), "normal");
 
         $tarjeta = new Tarjeta;
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $this->assertEquals($boleto->obtenerTipo(), "plus");
     }
 
@@ -54,14 +54,14 @@ class TarjetaTest extends TestCase {
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
 
-        $tarjeta->pagarBoleto($colectivo);
-        $tarjeta->pagarBoleto($colectivo);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertFalse($tarjeta->restarPlus());
         $tarjeta->recargar(50, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 2);
 
-        $tarjeta->pagarBoleto($colectivo);
-        $tarjeta->pagarBoleto($colectivo);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 1);
         $tarjeta->recargar(50, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 2);
@@ -75,14 +75,14 @@ class TarjetaTest extends TestCase {
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
 
-        $tarjeta->pagarBoleto($colectivo);
-        $tarjeta->pagarBoleto($colectivo);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->recargar(100, $gestor);
-        $tarjeta->pagarBoleto($colectivo);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes["normal"] * 3);
         
         $tarjeta = new Tarjeta;
-        $tarjeta->pagarBoleto($colectivo);
+        $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->recargar(100, $gestor);
         $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes["normal"] * 2);
     }
@@ -106,14 +106,14 @@ class TarjetaTest extends TestCase {
         $tarjeta = new Tarjeta;
         $tarjeta->recargar(100, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $colectivo = new Colectivo(456, "Rosariobus", 1234);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
 
         $this->assertEquals($boleto->obtenerTipo(), "trasbordo");
 
         $tarjeta->avanzarTiempo(5400);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $this->assertEquals($boleto->obtenerTipo(), "normal");
 
     }
@@ -124,10 +124,10 @@ class TarjetaTest extends TestCase {
         $tarjeta->recargar(50, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
         $tarjeta->avanzarTiempo(300);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $colectivo = new Colectivo(456, "Rosariobus", 1234);
         $tarjeta->avanzarTiempo(300);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
 
         $this->assertEquals($boleto->obtenerTipo(), "trasbordo");
     }
@@ -138,10 +138,10 @@ class TarjetaTest extends TestCase {
         $tarjeta->recargar(50, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
         $tarjeta->avanzarTiempo(300);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $colectivo = new Colectivo(456, "Rosariobus", 1234);
         $tarjeta->avanzarTiempo(300);
-        $boleto = $colectivo->pagarCon($tarjeta);
+        $boleto = $colectivo->pagarCon($tarjeta, $gestor);
 
         $this->assertEquals($boleto->obtenerTipo(), "trasbordo");
     }
