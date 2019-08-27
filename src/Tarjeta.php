@@ -2,6 +2,19 @@
 
 namespace TrabajoTarjeta;
 
+class Tipos {
+  const Normal = 0;
+  const Medio = 1;
+  const Libre = 2;
+}
+
+class Pasajes {
+  const Normal = 0;
+  const Plus = 1;
+  const Transbordo = 2;
+  const Fallido = 3;
+}
+
 class Tarjeta implements TarjetaInterface {
 
   const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
@@ -35,37 +48,33 @@ class Tarjeta implements TarjetaInterface {
     $costo = $gestorDeMontos->montoAPagar($this->tipo);
     $this->recarga_plus = 2 - $this->plus_disponibles;
 
-    // hay plus que pagar
+    // hay plus que pagar y se pueden pagar
     if($this->saldo > $costo * $this->recarga_plus){
-      $costo += (Tarjeta::viajes[$this->tipo] * $this->recarga_plus);
+      $costo += ($gestorDeMontos->montoAPagar(Tipos::Normal) * $this->recarga_plus);
       $this->plus_disponibles = 2;
+      $this->recarga_plus = 0;
     }
+
+    $pasaje;
     if($this->sePuedeTransbordo($colectivo)){
       $costo = 0;
-      $this->ultimoCosto = $costo;
-      $this->ultimoColectivo = $colectivo;
-      $this->ultimoPago = $this->obtenerTiempo();
       $this->ultimoTrasbordo = False;
-      return true;
+      $pasaje = Pasajes::Transbordo;
+    }else if($this->saldo >= $costo){
+      $this->saldo -= $costo;
+      $this->ultimoTrasbordo = True;
+      $pasaje = Pasajes::Normal;
+    }else if($this->saldo < $costo && $this->plus_disponibles > 0){
+      $this->restarPlus();
+      $pasaje = Pasajes::Plus;
     }else{
-      if($this->saldo >= $costo){
-        $this->saldo -= $costo;
-        $this->ultimoCosto = $costo;
-        $this->ultimoColectivo = $colectivo;
-        $this->ultimoPago = $this->obtenerTiempo();
-        $this->ultimoTrasbordo = True;
-        return true;
-      }else if($this->saldo < $costo && $this->plus_disponibles > 0){
-        $this->restarPlus();
-        $this->ultimoCosto = $costo;
-        $this->ultimoColectivo = $colectivo;
-        $this->ultimoPago = $this->obtenerTiempo();
-        return true;
-      }else{
-        return false;
+      return Pasajes::Fallido;
     }
+    $this->ultimoCosto = $costo;
+    $this->ultimoColectivo = $colectivo;
+    $this->ultimoPago = $this->obtenerTiempo();
+    return $pasaje;
   }
-}
 
 /**
  * Devuelve false, si no se pudo restar un viaje plus, sino lo resta.
@@ -160,7 +169,7 @@ class Tarjeta implements TarjetaInterface {
     */
 
   public function sePuedeTransbordo($colectivo){
-    if($colectivo->linea() != $this->ultimoColectivo->linea() && $this->ultimoTrasbordo === true && $this->saldo > $this->costo){
+    if($colectivo->linea() != $this->ultimoColectivo->linea() && $this->ultimoTrasbordo === true && $this->saldo > $this->costo && $this->plus_disponibles == 2){
       $dia = date('w', $this->obtenerTiempo());
       $hora = date('G', $this->obtenerTiempo());
 

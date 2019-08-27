@@ -4,7 +4,7 @@ namespace TrabajoTarjeta;
 
 
 class TarjetaMedio extends Tarjeta {
-  protected $tipo = 'medio';
+  protected $tipo = Tipos::Medio;
   protected $ultimoPago;
   protected $costo = 7.40;
 

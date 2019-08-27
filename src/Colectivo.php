@@ -49,15 +49,10 @@ class Colectivo implements ColectivoInterface {
      * @return Boleto
      */
     public function pagarCon(TarjetaInterface $tarjeta, GestorDeMontosInterface $gestor){
-      $pago = $tarjeta->pagarBoleto($this,$gestor);
-      if($pago === false){
-        return false;//no tiene saldo
-      }else if($pago === true){
-        return New Boleto($tarjeta->abonado(), $this, $tarjeta, 'normal');//boleto normal
-      }else if ($pago === 'p'){
-        return New Boleto($tarjeta->abonado(), $this, $tarjeta, 'plus');//boleto plus
-      }else if ($pago === 't'){
-        return New Boleto($tarjeta->abonado(), $this, $tarjeta, 'trasbordo');// boleto trasbordo
+      $tipoDePasaje = $tarjeta->pagarBoleto($this,$gestor);
+      if($tipoDePasaje === Pasajes::Fallido){
+        return null;
       }
+      return New Boleto($tarjeta->abonado(), $this, $tarjeta, $tipoDePasaje);
     }
 }
