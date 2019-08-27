@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 class ColectivoTest extends TestCase {
 
     const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
-    const recargas = array(10 => 10, 30 => 30, 50 => 50, 100 => 100, 200 => 200, 947.60 => 1100, 1788.80 => 2200);
+    const recargas = array("10" => 10, "30" => 30, "50" => 50, "100" => 100, "200" => 200, "947.60" => 1100, "1788.80" => 2200);
 
     /**
      * Comprueba que siempre es posible pagar con la tarjeta, se cuentan los dos viajes plus.
