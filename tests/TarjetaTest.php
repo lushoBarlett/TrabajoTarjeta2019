@@ -74,13 +74,13 @@ class TarjetaTest extends TestCase {
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->recargar(100, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
-        $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes["normal"] * 3);
+        $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes[Tipos::Normal] * 3);
         
         $tarjeta = new Tarjeta;
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->recargar(100, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
-        $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes["normal"] * 2);
+        $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes[Tipos::Normal] * 2);
     }
 
     /**
@@ -106,11 +106,11 @@ class TarjetaTest extends TestCase {
         $colectivo = new Colectivo(456, "Rosariobus", 1234);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
 
-        $this->assertEquals($boleto->obtenerTipo(), "trasbordo");
+        $this->assertEquals($boleto->obtenerTipo(), Pasajes::Transbordo);
 
         $tarjeta->avanzarTiempo(5400);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
-        $this->assertEquals($boleto->obtenerTipo(), "normal");
+        $this->assertEquals($boleto->obtenerTipo(), Pasajes::Normal);
 
     }
 
@@ -125,7 +125,7 @@ class TarjetaTest extends TestCase {
         $tarjeta->avanzarTiempo(300);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
 
-        $this->assertEquals($boleto->obtenerTipo(), "trasbordo");
+        $this->assertEquals($boleto->obtenerTipo(), Pasajes::Transbordo);
     }
 
     public function testTrasbordoMedioUni() {
@@ -139,7 +139,7 @@ class TarjetaTest extends TestCase {
         $tarjeta->avanzarTiempo(300);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
 
-        $this->assertEquals($boleto->obtenerTipo(), "trasbordo");
+        $this->assertEquals($boleto->obtenerTipo(), Pasajes::Transbordo);
     }
 
 

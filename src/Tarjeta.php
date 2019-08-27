@@ -2,27 +2,40 @@
 
 namespace TrabajoTarjeta;
 
+/**
+ * Siempre debe coincidir con todos los tipos de PAGO
+ */
 class Tipos {
+  // precio completo
   const Normal = 0;
+  // mitad de precio
   const Medio = 1;
+  // gratis
   const Libre = 2;
 }
 
+/**
+ * Tipos de operaciones de pago
+ */
 class Pasajes {
+  // operacion fallida
+  const Fallido = -1;
+  // precio normal dependiendo de la tarjeta
   const Normal = 0;
-  const Plus = 1;
-  const Transbordo = 2;
-  const Fallido = 3;
+  // precio completo independientemente de la tarjeta
+  const Completo = 1;
+  // precio completo prestado
+  const Plus = 2;
+  // precio del transbordo (suponiendo un unico precio de transbordo)
+  const Transbordo = 3;
 }
 
 class Tarjeta implements TarjetaInterface {
 
-  const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
-
   protected $tiempo;
   protected $saldo = 0;
   protected $plus_disponibles = 2;
-  protected $tipo = 'normal';
+  protected $tipo;
   protected $id;
   protected $recarga_plus = 0; //0 no recargo plus, 1 1, 2 2
   protected $ultimoColectivo;
@@ -31,6 +44,7 @@ class Tarjeta implements TarjetaInterface {
   protected $ultimoCosto;
 
   public function __construct() {
+    $this->tipo = Tipos::Normal;
     $this->tiempo = new TiempoFalso;
     $this->ultimoColectivo = new Colectivo(0,0,0);
   }
@@ -44,30 +58,42 @@ class Tarjeta implements TarjetaInterface {
     return true;
   }
 
-  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
-    $costo = $gestorDeMontos->montoAPagar($this->tipo);
+  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos, $override = null){
+    $costo;
+    // fuerza un costo (opcional), los chequeos de si se puede corren igual
+    if($override){
+      $costo = $gestorDeMontos->montoAPagar($override);
+    } else{
+      $costo = $gestorDeMontos->montoAPagar($this->tipo);
+    }
     $this->recarga_plus = 2 - $this->plus_disponibles;
 
     // hay plus que pagar y se pueden pagar
-    if($this->saldo > $costo * $this->recarga_plus){
-      $costo += ($gestorDeMontos->montoAPagar(Tipos::Normal) * $this->recarga_plus);
+    if($this->saldo > $gestorDeMontos->montoAPagar(Tipos::Normal) * $this->recarga_plus){
+      $costo += $gestorDeMontos->montoAPagar(Tipos::Normal) * $this->recarga_plus;
       $this->plus_disponibles = 2;
       $this->recarga_plus = 0;
     }
 
-    $pasaje;
+    // transbordo
     if($this->sePuedeTransbordo($colectivo)){
       $costo = 0;
       $this->ultimoTrasbordo = False;
       $pasaje = Pasajes::Transbordo;
-    }else if($this->saldo >= $costo){
+    }
+    // pasaje normal de la tarjeta, cambia depende de la tarjeta
+    else if($this->saldo >= $costo){
       $this->saldo -= $costo;
       $this->ultimoTrasbordo = True;
       $pasaje = Pasajes::Normal;
-    }else if($this->saldo < $costo && $this->plus_disponibles > 0){
+    }
+    // viaje plus, hay solo dos y salen lo que un precio de tarjeta normal
+    else if($this->saldo < $costo && $this->plus_disponibles > 0){
       $this->restarPlus();
       $pasaje = Pasajes::Plus;
-    }else{
+    }
+    // falla el proceso, no se puede viajar
+    else{
       return Pasajes::Fallido;
     }
     $this->ultimoCosto = $costo;

@@ -4,6 +4,14 @@ namespace TrabajoTarjeta;
 
 
 class TarjetaLibre extends Tarjeta {
-  protected $costo = 0;
-  protected $tipo = 'libre';
+
+  public function __construct() {
+    parent::__construct();
+    $this->tipo = Tipos::Libre;
+  }
+
+  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
+    return Pasajes::Normal;
+  }
+
 }

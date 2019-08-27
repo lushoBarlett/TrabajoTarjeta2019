@@ -24,5 +24,14 @@ interface TarjetaInterface {
      * @return bool Retorna True si se pagó con éxito, False en caso contrario
      */
     public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos);
+    
+    /**
+     * Obtiene la informacion de la tarjeta.
+     * 
+     * @return array Array asociativo [propiedad => valor]
+     */
+    //public function informacion();
 
 }
+
+?>

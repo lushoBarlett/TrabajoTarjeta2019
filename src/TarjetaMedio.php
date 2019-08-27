@@ -3,45 +3,33 @@
 namespace TrabajoTarjeta;
 
 
-class TarjetaMedio extends Tarjeta {
-  protected $tipo = Tipos::Medio;
-  protected $ultimoPago;
-  protected $costo = 7.40;
+class TarjetaMedio extends Tarjeta implements MedioInterface {
 
-  public function restarViaje($colectivo){
-    if($this->sePuedeTransbordo($colectivo)){
-      $this->costo = $this->costo * 0.33;
-      $this->saldo -= $this->costo;
-      $this->ultimoColectivo = $colectivo;
-      $this->ultimoPago = $this->obtenerTiempo();
-      $this->ultimoTrasbordo = False; 
-      return 't';
+  public function __construct() {
+    parent::__construct();
+    $this->tipo = Tipos::Medio;
+  }
+
+  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
+    $result = parent::pagarBoleto($colectivo,$gestorDeMontos);
+    if($this->sePuedePagar){
+      $result = $result == Pasajes::Normal ? Pasajes::Completo : $result;
+    }
+    return $result;
+  }
+
+  /**
+   * Control de tiempo para el medio boleto
+   * 
+   * @return bool Si se puede pagar o no
+   */
+  protected function sePuedePagar(){
+    $now = $this->obtenerTiempo();
+    if(($now - $this->ultimoPago) >= 300){
+      return true;
     }else{
-      if($this->sePuedePagar() === true){
-        if($this->saldo > $this->costo){
-          $this->saldo -= $this->costo;
-          $this->ultimoPago = $this->obtenerTiempo();
-          $this->ultimoTrasbordo = True; 
-          return true;
-        }else if($this->saldo < $this->costo && $this->plus_disponibles > 0){
-          $this->restarPlus();
-          $this->ultimoPago = $this->obtenerTiempo();
-          return 'p';
-        }else {
-          return false;
-        }
-      }else{
-        return false;
-      }
+      return false;
     }
   }
-    public function sePuedePagar(){
-      $ahora = $this->obtenerTiempo();
-      if(($ahora - $this->ultimoPago) >= 300){
-        return true;
-      }else{
-        return false;
-      }
-    }
 
 }
