@@ -2,34 +2,6 @@
 
 namespace TrabajoTarjeta;
 
-/**
- * Siempre debe coincidir con todos los tipos de PAGO
- */
-class Tipos {
-  // precio completo
-  const Normal = 0;
-  // mitad de precio
-  const Medio = 1;
-  // gratis
-  const Libre = 2;
-}
-
-/**
- * Tipos de operaciones de pago
- */
-class Pasajes {
-  // operacion fallida
-  const Fallido = -1;
-  // precio normal dependiendo de la tarjeta
-  const Normal = 0;
-  // precio completo independientemente de la tarjeta
-  const Completo = 1;
-  // precio completo prestado
-  const Plus = 2;
-  // precio del transbordo (suponiendo un unico precio de transbordo)
-  const Transbordo = 3;
-}
-
 class Tarjeta implements TarjetaInterface {
 
   protected $tiempo;
