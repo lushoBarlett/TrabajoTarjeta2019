@@ -63,7 +63,7 @@ class BoletoTest extends TestCase {
 
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
-        $this->assertEquals($boleto->obtenerTipoTarj(), Tipos::Medios);
+        $this->assertEquals($boleto->obtenerTipoTarj(), Tipos::Medio);
         $this->assertEquals($boleto->obtenerTipo(), Pasajes::Normal);
 
         $tarjeta->avanzarTiempo(300);
