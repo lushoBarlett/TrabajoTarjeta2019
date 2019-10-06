@@ -3,7 +3,7 @@
 namespace TrabajoTarjeta;
 
 
-class TarjetaMedioUni extends Tarjeta implements MedioInterface {
+class TarjetaMedioUni extends Tarjeta {
   protected $ultimoPagoMedio;
   protected $mediosDisponibles = 2;
 

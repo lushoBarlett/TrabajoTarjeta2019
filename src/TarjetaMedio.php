@@ -3,7 +3,7 @@
 namespace TrabajoTarjeta;
 
 
-class TarjetaMedio extends Tarjeta implements MedioInterface {
+class TarjetaMedio extends Tarjeta {
 
   public function __construct() {
     parent::__construct();
