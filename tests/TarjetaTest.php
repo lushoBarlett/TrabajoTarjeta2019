@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class TarjetaTest extends TestCase {
 
-    const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
-    const recargas = array("10" => 10, "30" => 30, "50" => 50, "100" => 100, "200" => 200, "947.60" => 1100, "1788.80" => 2200);
+    const viajes = array(Tipos::Libre => 0, Tipos::Medio => 1, Tipos::Normal => 2);
+    const recargas = array("1" => 1, "2" => 2, "3" => 3, "4" => 5, "5" => 10);
 
     /**
     * Comprueba que es posible pagar un viaje con y sin tener saldo
@@ -19,11 +19,11 @@ class TarjetaTest extends TestCase {
 
         $tarjeta->recargar(30, $gestor);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
-        $this->assertEquals($boleto->obtenerTipo(), "normal");
+        $this->assertEquals($boleto->obtenerTipo(), Pasajes::Normal);
 
         $tarjeta = new Tarjeta;
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
-        $this->assertEquals($boleto->obtenerTipo(), "plus");
+        $this->assertEquals($boleto->obtenerTipo(), Pasajes::Plus);
     }
 
     /**
@@ -33,17 +33,17 @@ class TarjetaTest extends TestCase {
         $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new Tarjeta;
 
-        $this->assertTrue($tarjeta->recargar(10, $gestor));
+        $this->assertTrue($tarjeta->recargar(1, $gestor));
+        $this->assertEquals($tarjeta->obtenerSaldo(), 1);
+
+        $this->assertTrue($tarjeta->recargar(2, $gestor));
+        $this->assertEquals($tarjeta->obtenerSaldo(), 2);
+
+        $this->assertTrue($tarjeta->recargar(4, $gestor));
+        $this->assertEquals($tarjeta->obtenerSaldo(), 5);
+
+        $this->assertTrue($tarjeta->recargar(5, $gestor));
         $this->assertEquals($tarjeta->obtenerSaldo(), 10);
-
-        $this->assertTrue($tarjeta->recargar(30, $gestor));
-        $this->assertEquals($tarjeta->obtenerSaldo(), 40);
-
-        $this->assertTrue($tarjeta->recargar(947.60, $gestor));
-        $this->assertEquals($tarjeta->obtenerSaldo(), 987.60);
-
-        $this->assertTrue($tarjeta->recargar(1788.80, $gestor));
-        $this->assertEquals($tarjeta->obtenerSaldo(), 2776.48);
     }
 
     /**
@@ -57,7 +57,7 @@ class TarjetaTest extends TestCase {
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertFalse($tarjeta->restarPlus());
-        $tarjeta->recargar(100, $gestor);
+        $tarjeta->recargar(3, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 2);
     }
@@ -72,13 +72,13 @@ class TarjetaTest extends TestCase {
 
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
-        $tarjeta->recargar(100, $gestor);
+        $tarjeta->recargar(3, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes[Tipos::Normal] * 3);
         
         $tarjeta = new Tarjeta;
         $tarjeta->pagarBoleto($colectivo, $gestor);
-        $tarjeta->recargar(100, $gestor);
+        $tarjeta->recargar(3, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->abonado(), TarjetaTest::viajes[Tipos::Normal] * 2);
     }
@@ -100,7 +100,7 @@ class TarjetaTest extends TestCase {
     public function testTrasbordo() {
         $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(100, $gestor);
+        $tarjeta->recargar(3, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $colectivo = new Colectivo(456, "Rosariobus", 1234);
@@ -117,7 +117,7 @@ class TarjetaTest extends TestCase {
     public function testTrasbordoMedio() {
         $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new TarjetaMedio;
-        $tarjeta->recargar(50, $gestor);
+        $tarjeta->recargar(2, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
         $tarjeta->avanzarTiempo(300);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
@@ -131,7 +131,7 @@ class TarjetaTest extends TestCase {
     public function testTrasbordoMedioUni() {
         $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new TarjetaMedioUni;
-        $tarjeta->recargar(50, $gestor);
+        $tarjeta->recargar(2, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
         $tarjeta->avanzarTiempo(300);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);

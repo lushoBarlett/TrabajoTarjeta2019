@@ -14,7 +14,7 @@ class TarjetaMedioUni extends Tarjeta {
 
   public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
     $result = parent::pagarBoleto($colectivo,$gestorDeMontos);
-    if($this->sePuedePagar){
+    if($this->sePuedePagar()){
       $result = $result == Pasajes::Normal ? Pasajes::Completo : $result;
     }
     return $result;

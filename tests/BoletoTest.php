@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class BoletoTest extends TestCase {
 
-    const viajes = array(Tipos::Libre => 0, Tipos::Medio => 13.75, Tipos::Normal => 27.50);
-    const recargas = array("10" => 10, "30" => 30, "50" => 50, "100" => 100, "200" => 200, "947.60" => 1100, "1788.80" => 2200);
+    const viajes = array(Tipos::Libre => 0, Tipos::Medio => 1, Tipos::Normal => 2);
+    const recargas = array("1" => 1, "2" => 2, "3" => 3, "4" => 4, "5" => 5);
 
     /**
      * Comprueba que es posible tener saldo cero.
@@ -27,7 +27,7 @@ class BoletoTest extends TestCase {
     public function testBoletoNormal() {
         $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(30, $gestor);
+        $tarjeta->recargar(1, $gestor);
         $colectivo = new Colectivo(142, "Metrobus", 3541);
 
         $tarjeta->avanzarTiempo(5400);
@@ -57,7 +57,7 @@ class BoletoTest extends TestCase {
         $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(30, $gestor);
+        $tarjeta->recargar(1, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(300);
 
@@ -79,7 +79,7 @@ class BoletoTest extends TestCase {
         $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedioUni($tiempo);
-        $tarjeta->recargar(100, $gestor);
+        $tarjeta->recargar(3, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(86400);
 
@@ -103,7 +103,7 @@ class BoletoTest extends TestCase {
         $this->assertEquals($boleto->obtenerValor(), BoletoTest::viajes[Tipos::Medio]);
 
         $tarjeta2 = new TarjetaMedioUni($tiempo);
-        $tarjeta2->recargar(100, $gestor);
+        $tarjeta2->recargar(3, $gestor);
         $tarjeta2->pagarBoleto($colectivo);
         $tarjeta2->avanzarTiempo(86600);
         $this->assertEquals($tarjeta2->pagarBoleto($colectivo), Pasajes::Normal);
@@ -118,7 +118,7 @@ class BoletoTest extends TestCase {
     public function testBoletoLibre() {
         $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tarjeta = new TarjetaLibre;
-        $tarjeta->recargar(30, $gestor);
+        $tarjeta->recargar(1, $gestor);
         $colectivo = new Colectivo;
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $this->assertEquals($boleto->obtenerTipoTarj(), Tipos::Libre);
@@ -132,10 +132,10 @@ class BoletoTest extends TestCase {
         $gestor = new GestorDeMontos(BoletoTest::viajes,BoletoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(50, $gestor);
+        $tarjeta->recargar(2, $gestor);
         $colectivo = new Colectivo;
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
         $boleto = $colectivo->pagarCon($tarjeta, $gestor);
-        $this->assertEquals($boleto->obtenerTipo, Pasajes::Completo);
+        $this->assertEquals($boleto->obtenerTipo(), Pasajes::Completo);
     }
 }

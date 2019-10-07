@@ -30,14 +30,8 @@ class Tarjeta implements TarjetaInterface {
     return true;
   }
 
-  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos, $override = null){
-    $costo;
-    // fuerza un costo (opcional), los chequeos de si se puede corren igual
-    if($override){
-      $costo = $gestorDeMontos->montoAPagar($override);
-    } else{
-      $costo = $gestorDeMontos->montoAPagar($this->tipo);
-    }
+  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
+    $costo = $gestorDeMontos->montoAPagar($this->tipo);
     $this->recarga_plus = 2 - $this->plus_disponibles;
 
     // hay plus que pagar y se pueden pagar
@@ -167,7 +161,7 @@ class Tarjeta implements TarjetaInterface {
     */
 
   public function sePuedeTransbordo($colectivo){
-    if($colectivo->linea() != $this->ultimoColectivo->linea() && $this->ultimoTrasbordo === true && $this->saldo > $this->costo && $this->plus_disponibles == 2){
+    if($colectivo->linea() != $this->ultimoColectivo->linea() && $this->ultimoTrasbordo === true){
       $dia = date('w', $this->obtenerTiempo());
       $hora = date('G', $this->obtenerTiempo());
 

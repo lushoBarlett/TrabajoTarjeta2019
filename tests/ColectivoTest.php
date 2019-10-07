@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class ColectivoTest extends TestCase {
 
-    const viajes = array("libre" => 0, "medio" => 13.75, "normal" => 27.50);
-    const recargas = array("10" => 10, "30" => 30, "50" => 50, "100" => 100, "200" => 200, "947.60" => 1100, "1788.80" => 2200);
+    const viajes = array(Tipos::Libre => 0, Tipos::Medio => 1, Tipos::Normal => 2);
+    const recargas = array("1" => 1, "2" => 2, "3" => 3, "4" => 4, "5" => 5);
 
     /**
      * Comprueba que siempre es posible pagar con la tarjeta, se cuentan los dos viajes plus.
@@ -32,10 +32,10 @@ class ColectivoTest extends TestCase {
         $gestor = new GestorDeMontos(ColectivoTest::viajes,ColectivoTest::recargas);
         $tiempo = new TiempoFalso;
         $tarjeta = new TarjetaMedio($tiempo);
-        $tarjeta->recargar(30, $gestor);
+        $tarjeta->recargar(1, $gestor);
         $colectivo = new Colectivo;
         $tarjeta->avanzarTiempo(300);
-        $this->assertEquals($colectivo->pagarCon($tarjeta, $gestor)->obtenerValor(), ColectivoTest::viajes["medio"]);
+        $this->assertEquals($colectivo->pagarCon($tarjeta, $gestor)->obtenerValor(), ColectivoTest::viajes[Tipos::Medio]);
     }
 
     /**
@@ -45,7 +45,7 @@ class ColectivoTest extends TestCase {
         $gestor = new GestorDeMontos(ColectivoTest::viajes,ColectivoTest::recargas);
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(30, $gestor);
+        $tarjeta->recargar(1, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
@@ -59,7 +59,7 @@ class ColectivoTest extends TestCase {
         $gestor = new GestorDeMontos(ColectivoTest::viajes,ColectivoTest::recargas);
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
-        $tarjeta->recargar(30, $gestor);
+        $tarjeta->recargar(1, $gestor);
         $tarjeta->pagarBoleto($colectivo, $gestor);
         $this->assertEquals($tarjeta->obtenerPlus(), 2);
         $tarjeta->pagarBoleto($colectivo, $gestor);
