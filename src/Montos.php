@@ -2,7 +2,7 @@
 
 namespace TrabajoTarjeta;
 
-class GestorDeMontos implements GestorDeMontosInterface {
+class Montos implements MontosInterface {
     
     protected $montosDeViaje;
     protected $montosDeRecarga;

@@ -6,15 +6,15 @@ use PHPUnit\Framework\TestCase;
 
 class TarjetaTest extends TestCase {
 
-    const viajes = array(Tipos::Libre => 0, Tipos::Medio => 1, Tipos::Normal => 2);
+    const viajes = array(Pasajes::Transbordo => 0, Pasajes::Libre => 0, Pasajes::Medio => 1, Pasajes::Normal => 2);
     const recargas = array("1" => 1, "2" => 2, "3" => 3, "4" => 5, "5" => 10);
 
     /**
     * Comprueba que es posible pagar un viaje con y sin tener saldo
     */
     public function testPagarSaldo() {
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
-        $tarjeta = new Tarjeta;
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $tarjeta = new Tarjeta($gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
 
         $tarjeta->recargar(30, $gestor);
@@ -30,7 +30,7 @@ class TarjetaTest extends TestCase {
      * Comprueba que la tarjeta aumenta su saldo cuando se carga saldo válido.
      */
     public function testCargaSaldo() {
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new Tarjeta;
 
         $this->assertTrue($tarjeta->recargar(1, $gestor));
@@ -50,7 +50,7 @@ class TarjetaTest extends TestCase {
      * Comprueba que al realizar una recarga luego de haber utilizado los viajes plus, estos vuelvan a su valor inicial.
      */
     public function testCargaPlus(){
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
 
@@ -66,7 +66,7 @@ class TarjetaTest extends TestCase {
      * Comprueba que el monto abonado por la tarjeta es el correcto.
      */
     public function testAbonado(){
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
         $colectivo = new Colectivo;
         $tarjeta = new Tarjeta;
 
@@ -87,7 +87,7 @@ class TarjetaTest extends TestCase {
      * Comprueba que la tarjeta no puede cargar saldos invalidos.
      */
     public function testCargaSaldoInvalido() {
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new Tarjeta;
 
         $this->assertFalse($tarjeta->recargar(15, $gestor));
@@ -98,7 +98,7 @@ class TarjetaTest extends TestCase {
      * Comprueba que es posible obtener el boleto de tipo trasbordo para cada tipo.
      */
     public function testTrasbordo() {
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new Tarjeta;
         $tarjeta->recargar(3, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
@@ -115,7 +115,7 @@ class TarjetaTest extends TestCase {
     }
 
     public function testTrasbordoMedio() {
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new TarjetaMedio;
         $tarjeta->recargar(2, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);
@@ -129,7 +129,7 @@ class TarjetaTest extends TestCase {
     }
 
     public function testTrasbordoMedioUni() {
-        $gestor = new GestorDeMontos(TarjetaTest::viajes,TarjetaTest::recargas);
+        $gestor = new Montos(TarjetaTest::viajes,TarjetaTest::recargas);
         $tarjeta = new TarjetaMedioUni;
         $tarjeta->recargar(2, $gestor);
         $colectivo = new Colectivo(145, "Metrobus", 4825);

@@ -2,7 +2,7 @@
 
 namespace TrabajoTarjeta;
 
-interface GestorDeMontosInterface {
+interface MontosInterface {
 
     /**
      * Retorna el monto a pagar dado el tipo de la tarjeta

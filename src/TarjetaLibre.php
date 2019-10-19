@@ -10,7 +10,7 @@ class TarjetaLibre extends Tarjeta {
     $this->tipo = Tipos::Libre;
   }
 
-  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
+  public function pagarBoleto(ColectivoInterface $colectivo){
     return Pasajes::Normal;
   }
 

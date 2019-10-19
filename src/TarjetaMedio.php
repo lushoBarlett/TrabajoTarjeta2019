@@ -10,8 +10,8 @@ class TarjetaMedio extends Tarjeta {
     $this->tipo = Tipos::Medio;
   }
 
-  public function pagarBoleto(ColectivoInterface $colectivo, GestorDeMontosInterface $gestorDeMontos){
-    $result = parent::pagarBoleto($colectivo,$gestorDeMontos);
+  public function pagarBoleto(ColectivoInterface $colectivo){
+    $result = parent::pagarBoleto($colectivo);
     if($this->sePuedePagar()){
       $result = $result == Pasajes::Normal ? Pasajes::Completo : $result;
     }

@@ -5,36 +5,20 @@ namespace TrabajoTarjeta;
 interface ColectivoInterface {
 
     /**
-     * Devuelve el nombre de la linea. Ejemplo '142 Negro'
-     *
-     * @return string
-     */
-    public function linea();
-
-    /**
-     * Devuelve el nombre de la empresa. Ejemplo 'Semtur'
-     *
-     * @return string
-     */
-    public function empresa();
-
-    /**
-     * Devuelve el numero de unidad. Ejemplo: 12
-     *
-     * @return int
-     */
-    public function numero();
-
-    /**
      * Paga un viaje en el colectivo con una tarjeta en particular.
      *
      * @param TarjetaInterface $tarjeta Tarjeta con la cual se paga.
      * @param GestorDeMontoInterface $gestor Gestor de pago automático.
      *
-     * @return BoletoInterface|FALSE
-     *  El boleto generado por el pago del viaje. O FALSE si no hay saldo
-     *  suficiente en la tarjeta.
+     * @return string El saldo de la tarjeta, o un error
      */
-    public function pagarCon(TarjetaInterface $tarjeta, GestorDeMontosInterface $gestor);
+    public function pagarCon(TarjetaInterface $tarjeta, MontosInterface $gestor, TiempoInterface $tiempo, TransbordoInterface $transbordo);
+
+    /**
+     * Obtiene la informacion de la tarjeta.
+     * 
+     * @return array Array asociativo [propiedad => valor]
+     */
+    public function informacion();
 
 }
