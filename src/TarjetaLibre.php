@@ -3,15 +3,16 @@
 namespace TrabajoTarjeta;
 
 
-class TarjetaLibre extends Tarjeta {
+class TarjetaLibre implements PagoRecargableInterface {
+
+  use TarjetaBase;
 
   public function __construct() {
-    parent::__construct();
     $this->tipo = Tipos::Libre;
   }
 
-  public function pagarBoleto(ColectivoInterface $colectivo){
-    return Pasajes::Normal;
+  public function pagarBoleto(CanceladoraInterface $transporte, MontosInterface $montos, TiempoInterface $tiempo, TransbordoInterface $transbordo){
+    return $this->boleto->nuevo($this->saldo,Pasajes::Libre,$transporte,$tiempo);
   }
 
 }

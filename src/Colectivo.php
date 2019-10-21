@@ -2,7 +2,7 @@
 
 namespace TrabajoTarjeta;
 
-class Colectivo implements ColectivoInterface {
+class Colectivo implements CanceladoraInterface {
     
   protected $linea;
   protected $empresa;
@@ -14,23 +14,29 @@ class Colectivo implements ColectivoInterface {
     $this->numero = $numero;
   }
 
-  public function pagarCon(TarjetaInterface $tarjeta, MontosInterface $gestor, TiempoInterface $tiempo, TransbordoInterface $transbordo){
-    $info = $tarjeta->information(); // no hay garantias sobre el contenido, hacer interfaces especificas a las necesidades de las clases
+  public function pagadoCon(BoletoInterface $boleto){
+    switch ($boleto->pasaje()) {
+      case Pasaje::Libre:
+        return "Pase Libre.";
 
-    // hacer trabajo con las dos ultimas clases asi no las paso como parametro en la siguiente funcion
+      case Pasaje::Transbordo:
+        return "Transbordo. El saldo es {$boleto->saldo()}.";
 
-    $tipoDePasaje = $tarjeta->pagarBoleto($this,$gestor,$tiempo,$transbordo);
-    if($tipoDePasaje === Pasajes::Fallido){
-      return null;
+      case Pasaje::Medio:
+        return "Medio Boleto. El saldo es {$boleto->saldo()}.";
+
+      case Pasaje::Normal:
+        return "Normal. El saldo es {$boleto->saldo()}.";
+
+      case Pasaje::Plus:
+        return "Viaje Plus. El saldo es {$boleto->saldo()}.";
+
+      case Pasaje::Fallido:
+        return "Debe dos viajes plus.";
+        
+      default:
+        return "Error en la operacion.";
     }
-    return "";
   }
 
-  public function information(){
-    return (object)[
-      "linea" => $this->linea,
-      "empresa" => $this->empresa,
-      "numero" => $this->numero
-    ];
-  }
 }

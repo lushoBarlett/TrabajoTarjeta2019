@@ -7,9 +7,9 @@ interface MontosInterface {
     /**
      * Retorna el monto a pagar dado el tipo de la tarjeta
      *
-     * @param string $tipo El tipo de la tarjeta
+     * @param Pasaje $tipo El tipo de pasaje a pagar
      *
-     * @return float El monto que la tarjeta debe pagar, null si el tipo no es válido
+     * @return float El monto que cuesta el pasaje, null si el pasaje no es válido
      * 
      */
     public function montoAPagar($tipo);
@@ -17,7 +17,7 @@ interface MontosInterface {
     /**
      * Retorna la validez de un monto a recargar
      *
-     * @param float $monto El monto que se quiere cargar
+     * @param string $monto El monto que se quiere cargar
      *
      * @return float Valor a recargar, null si el monto no es válido
      * 

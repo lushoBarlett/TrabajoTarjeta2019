@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class TarjetaTest extends TestCase {
 
+    // TODO MAL ESTA ESTO, UPDATE A LO DE AHORA
+
     const viajes = array(Pasajes::Transbordo => 0, Pasajes::Libre => 0, Pasajes::Medio => 1, Pasajes::Normal => 2);
     const recargas = array("1" => 1, "2" => 2, "3" => 3, "4" => 5, "5" => 10);
 

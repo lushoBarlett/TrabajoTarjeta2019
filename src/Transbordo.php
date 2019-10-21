@@ -10,7 +10,7 @@ class Transbordo implements TransbordoInterface {
         $this->feriados = $feriados;
     }
 
-    public function sePuedeTransbordo(TarjetaInterface $tarjeta, ColectivoInterface $colectivo, TiempoInterface $tiempo){
+    public function validar(BoletoInterface $boleto, CanceladoraInterface $canceladora, TiempoInterface $tiempo){
         return false;
     }
 }

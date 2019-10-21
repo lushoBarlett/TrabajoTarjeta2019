@@ -25,7 +25,7 @@ class Montos implements MontosInterface {
     }
 
     public function montoACargar($monto) {
-        if(!array_key_exists((string)$monto,$this->montosDeRecarga)) return null;
-        return $this->montosDeRecarga[(string)$monto];
+        if(!array_key_exists($monto,$this->montosDeRecarga)) return null;
+        return $this->montosDeRecarga[$monto];
     }
 }
