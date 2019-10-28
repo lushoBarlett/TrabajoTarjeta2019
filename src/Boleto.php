@@ -9,7 +9,7 @@ class Boleto implements BoletoInterface {
     protected $transporte;
     protected $tiempo;
 
-    public function nuevo($saldo, $pasaje, CanceladoraInterface $transporte, String $tiempo){
+    public function nuevo(Float $saldo = null, $pasaje = null, CanceladoraInterface $transporte = null, TiempoInterface $tiempo = null){
         $this->saldo = $saldo;
         $this->pasaje = $pasaje;
         $this->transporte = $transporte;

@@ -7,12 +7,13 @@ class TarjetaLibre implements PagoRecargableInterface {
 
   use TarjetaBase;
 
-  public function __construct() {
+  private function __init() {
     $this->tipo = Tipos::Libre;
   }
 
-  public function pagarBoleto(CanceladoraInterface $transporte, MontosInterface $montos, TiempoInterface $tiempo, TransbordoInterface $transbordo){
-    return $this->boleto->nuevo($this->saldo,Pasajes::Libre,$transporte,$tiempo);
+  public function pagarBoleto(CanceladoraInterface $transporte, TiempoInterface $tiempo){
+    $this->boleto->nuevo($this->saldo,Pasajes::Libre,$transporte,$tiempo);
+    return $this->boleto;
   }
 
 }

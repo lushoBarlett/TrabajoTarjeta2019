@@ -16,22 +16,22 @@ class Colectivo implements CanceladoraInterface {
 
   public function pagadoCon(BoletoInterface $boleto){
     switch ($boleto->pasaje()) {
-      case Pasaje::Libre:
+      case Pasajes::Libre:
         return "Pase Libre.";
 
-      case Pasaje::Transbordo:
+      case Pasajes::Transbordo:
         return "Transbordo. El saldo es {$boleto->saldo()}.";
 
-      case Pasaje::Medio:
+      case Pasajes::Medio:
         return "Medio Boleto. El saldo es {$boleto->saldo()}.";
 
-      case Pasaje::Normal:
+      case Pasajes::Normal:
         return "Normal. El saldo es {$boleto->saldo()}.";
 
-      case Pasaje::Plus:
+      case Pasajes::Plus:
         return "Viaje Plus. El saldo es {$boleto->saldo()}.";
 
-      case Pasaje::Fallido:
+      case Pasajes::Fallido:
         return "Debe dos viajes plus.";
         
       default:

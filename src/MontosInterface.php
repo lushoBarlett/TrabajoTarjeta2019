@@ -7,7 +7,7 @@ interface MontosInterface {
     /**
      * Retorna el monto a pagar dado el tipo de la tarjeta
      *
-     * @param Pasaje $tipo El tipo de pasaje a pagar
+     * @param Pasajes $tipo El tipo de pasaje a pagar
      *
      * @return float El monto que cuesta el pasaje, null si el pasaje no es válido
      * 

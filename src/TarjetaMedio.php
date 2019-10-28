@@ -9,20 +9,24 @@ class TarjetaMedio implements PagoRecargableInterface {
 
   const MAX_PLUS = 2;
 
-  public function __construct() {
-    parent::__construct();
+  private function __init(){
     $this->tipo = Tipos::Medio;
+    $this->plus = TarjetaMedio::MAX_PLUS;
   }
 
-  public function pagarBoleto(CanceladoraInterface $transporte, MontosInterface $montos, TiempoInterface $tiempo, TransbordoInterface $transbordo){
+  public function pagarBoleto(CanceladoraInterface $transporte, TiempoInterface $tiempo){
     
     // transbordo
-    if($transbordo->validar($this->boleto,$transporte,$tiempo)){
-      return $this->boleto->nuevo($this->saldo,Pasajes::Transbordo,$transporte,$tiempo);
+    if($this->boleto->pasaje() != Pasajes::Transbordo){
+      $this->transbordo->ultimoPago($this->boleto);
+    }
+    if($this->transbordo->validar($transporte,$tiempo)){
+      $this->boleto->nuevo($this->saldo,Pasajes::Transbordo,$transporte,$tiempo);
+      return $this->boleto;
     }
     
-    $costo_normal = $montos->montoAPagar(Pasajes::Normal);
-    $costo_medio = $montos->montoAPagar(Pasajes::Medio);
+    $costo_normal = $this->montos->montoAPagar(Pasajes::Normal);
+    $costo_medio = $this->montos->montoAPagar(Pasajes::Medio);
     
     // pasaje normal
     if($this->saldo >= $costo_medio){
@@ -32,12 +36,12 @@ class TarjetaMedio implements PagoRecargableInterface {
       // medio
       if($this->validarMedio($tiempo)){
         $this->saldo -= $costo_normal;
-        $pasaje = Pasaje::Medio;
+        $pasaje = Pasajes::Medio;
       }
       // normal
       else if($this->saldo >= $costo_normal){
         $this->saldo -= $costo_normal;
-        $pasaje = Pasaje::Normal;
+        $pasaje = Pasajes::Normal;
       }
 
       // saldar plus si se puede
@@ -46,17 +50,20 @@ class TarjetaMedio implements PagoRecargableInterface {
         $this->plus++;
       }
 
-      return $this->boleto->nuevo($this->saldo,$pasaje,$transporte,$tiempo);
+      $this->boleto->nuevo($this->saldo,$pasaje,$transporte,$tiempo);
+      return $this->boleto;
     }
     
     // viaje plus
     if($this->plus > 0){
       $this->restarPlus();
-      return $this->boleto->nuevo($this->saldo,Pasajes::Plus,$transporte,$tiempo);
+      $this->boleto->nuevo($this->saldo,Pasajes::Plus,$transporte,$tiempo);
+      return $this->boleto;
     }
     
     // fallo
-    return $this->boleto->nuevo($this->saldo,Pasajes::Fallido,$transporte,$tiempo);
+    $this->boleto->nuevo($this->saldo,Pasajes::Fallido,$transporte,$tiempo);
+    return $this->boleto;
   }
 
   /**

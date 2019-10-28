@@ -8,14 +8,27 @@ trait TarjetaBase{
   protected $tipo;
   protected $id;
   protected $plus;
+  protected $montos;
+  protected $boleto;
+  protected $transbordo;
+
+  public function __construct(BoletoInterface $boleto, MontosInterface $montos, TransbordoInterface $transbordo) {
+    $this->boleto = $boleto;
+    $this->montos = $montos;
+    $this->transbordo = $transbordo;
+    $this->__init();
+  }
   
-  public function recargar($monto, MontosInterface $montos) {
-    if ($montoValidado = $montos->montoACargar($monto)) {
+  public function recargar($monto) {
+    if ($montoValidado = $this->montos->montoACargar($monto)) {
       $this->saldo += $montoValidado;
-    } else {
-      return false;
+      return true;
     }
-    return true;
+    return false;
+  }
+
+  public function saldo(){
+    return $this->saldo;
   }
 
   /**

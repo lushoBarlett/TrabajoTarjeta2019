@@ -11,10 +11,10 @@ class BoletoTest extends TestCase {
      */
     public function testRegistro(){
         $boleto = new Boleto;
-        $boleto->nuevo(0,Pasajes::Normal, new Colectivo(), (new Tiempo())->tiempo("y-m-d h:i:s"));
+        $boleto->nuevo(0,Pasajes::Normal, new Colectivo, new Tiempo);
         $this->assertEquals($boleto->pasaje(),Pasajes::Normal);
-        $this->assertEquals($boleto->transporte(),new Colectivo());
-        $this->assertEquals($boleto->tiempo(),(new Tiempo())->tiempo("y-m-d h:i:s"));
+        $this->assertEquals($boleto->transporte(),new Colectivo);
+        $this->assertEquals($boleto->tiempo(),new Tiempo);
     }
 
 }

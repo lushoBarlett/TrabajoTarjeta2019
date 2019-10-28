@@ -8,11 +8,11 @@ interface BoletoInterface {
      * Registra información sobre un pago
      * 
      * @param float $saldo
-     * @param Pasaje $pasaje
+     * @param Pasajes $pasaje
      * @param CanceladoraInterface $transporte
-     * @param string $tiempo
+     * @param TiempoInterface $tiempo
      */
-    public function nuevo($saldo, $pasaje, CanceladoraInterface $transporte, String $tiempo);
+    public function nuevo(Float $saldo, $pasaje, CanceladoraInterface $transporte, TiempoInterface $tiempo);
 
     /**
      * Devuelve el saldo restante luego de pagar.
@@ -24,7 +24,7 @@ interface BoletoInterface {
     /**
      * Devuelve el pasaje pagado.
      * 
-     * @return Pasaje
+     * @return Pasajes
      */
     public function pasaje();
 
@@ -38,7 +38,7 @@ interface BoletoInterface {
     /**
      * Devuelve el tiempo de cancelación.
      * 
-     * @return string
+     * @return TiempoInterface
      */
     public function tiempo();
 }
